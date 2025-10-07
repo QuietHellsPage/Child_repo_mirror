@@ -8,38 +8,36 @@ on:
 
 jobs:
   automerge:
-    if: |
-      github.event.pull_request.user.login == 'github-actions[bot]' &&
-      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-    
-      - name: Setup CLI
+      - name: Find pr_number if needed
+        id: pr-info
         run: |
-          bash set_cli.sh
-    
-      - name: Wait for checks to succeed
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+            echo "sha=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Checkout and setup
+        uses: actions/checkout@v4
+      
+      - name: Setup CLI
+        run: bash set_cli.sh
+      
+      - name: Wait for checks
         uses: fountainhead/action-wait-for-check@v1.2.0
         id: wait-for-checks
         with:
-            token: ${{ secrets.GITHUB_TOKEN }}
-            checkName: Build Documentation, Deploy pages
-            ref: ${{ github.event.pull_request.head.sha || github.sha }}
-        
+          token: ${{ secrets.GITHUB_TOKEN }}
+          checkName: Build Documentation
+          ref: ${{ steps.pr-info.outputs.sha || github.sha }}
+      
       - name: Automerge
         if: steps.wait-for-checks.outputs.conclusion == 'success'
         run: |
-          PR_NUMBER=${{ github.event.pull_request.number }}
-          echo "Enabling auto-merge for PR #$PR_NUMBER"
-          
-          gh pr merge $PR_NUMBER \
+          gh pr merge ${{ steps.pr-info.outputs.pr_number }} \
             --merge \
             --auto \
-            --delete-branch \
-            --body "Automatically merged after successful CI checks"
+            --delete-branch
         env:
           GH_TOKEN: ${{ secrets.SOURCE_REPO_PAT }}
