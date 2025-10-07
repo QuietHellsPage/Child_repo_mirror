@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Setup CLI
-        run: bash ../../set_cli.sh
+        run: bash ../../set cli.sh
       
       - name: Wait for checks
         uses: fountainhead/action-wait-for-check@v1.2.0
