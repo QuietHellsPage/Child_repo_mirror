@@ -23,9 +23,7 @@ jobs:
       
       - name: Setup CLI
         run: |
-          pwd
-          ls -la ../../
-          bash Child_repo_mirror/set_cli.sh
+          bash set_cli.sh
       
       - name: Wait for checks
         uses: fountainhead/action-wait-for-check@v1.2.0
