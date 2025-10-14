@@ -1,11 +1,3 @@
 I'll be back.
 test again
-"2"
-"3"
-"4"
-"Hello"
-"H"
-"HF!"
-"Last test"
-
-"WTH"
+"mergetest1"
