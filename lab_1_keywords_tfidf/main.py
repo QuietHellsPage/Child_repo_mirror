@@ -1,5 +1,5 @@
 """
-Lab 1
+Lab 1 tf-idf
 
 Extract keywords based on frequency related metrics
 """
@@ -26,6 +26,7 @@ def check_list(user_input: Any, elements_type: type, can_be_empty: bool) -> bool
     if not user_input:
         return can_be_empty
     return all(isinstance(element, elements_type) for element in user_input)
+
 
 
 def check_dict(user_input: Any, key_type: type, value_type: type, can_be_empty: bool) -> bool:
