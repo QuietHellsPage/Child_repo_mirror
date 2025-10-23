@@ -3,8 +3,9 @@ Lab 3.
 
 Beam-search and natural language generation evaluation
 """
-# pylint:disable=too-few-public-methods
-from typing import Optional
+
+# pylint:disable=too-few-public-methods, unused-import
+import json
 
 
 class TextProcessor:
@@ -24,7 +25,7 @@ class TextProcessor:
             end_of_word_token (str): A token denoting word boundary
         """
 
-    def _tokenize(self, text: str) -> Optional[tuple[str, ...]]:
+    def _tokenize(self, text: str) -> tuple[str, ...] | None:
         """
         Tokenize text into unigrams, separating words with special token.
 
@@ -36,13 +37,14 @@ class TextProcessor:
             text (str): Original text
 
         Returns:
-            tuple[str, ...]: Tokenized text
+            tuple[str, ...] | None: Tokenized text
 
         In case of corrupt input arguments, None is returned.
         In case any of methods used return None, None is returned.
         """
+        return isinstance(text, str)
 
-    def get_id(self, element: str) -> Optional[int]:
+    def get_id(self, element: str) -> int | None:
         """
         Retrieve a unique identifier of an element.
 
@@ -50,13 +52,13 @@ class TextProcessor:
             element (str): String element to retrieve identifier for
 
         Returns:
-            int: Integer identifier that corresponds to the given element
+            int | None: Integer identifier that corresponds to the given element
 
         In case of corrupt input arguments or arguments not included in storage,
         None is returned
         """
 
-    def get_end_of_word_token(self) -> str:
+    def get_end_of_word_token(self) -> str:  # type: ignore[empty-body]
         """
         Retrieve value stored in self._end_of_word_token attribute.
 
@@ -64,7 +66,7 @@ class TextProcessor:
             str: EoW token
         """
 
-    def get_token(self, element_id: int) -> Optional[str]:
+    def get_token(self, element_id: int) -> str | None:
         """
         Retrieve an element by unique identifier.
 
@@ -72,12 +74,12 @@ class TextProcessor:
             element_id (int): Identifier to retrieve identifier for
 
         Returns:
-            str: Element that corresponds to the given identifier
+            str | None: Element that corresponds to the given identifier
 
         In case of corrupt input arguments or arguments not included in storage, None is returned
         """
 
-    def encode(self, text: str) -> Optional[tuple[int, ...]]:
+    def encode(self, text: str) -> tuple[int, ...] | None:
         """
         Encode text.
 
@@ -88,7 +90,7 @@ class TextProcessor:
             text (str): An original text to be encoded
 
         Returns:
-            tuple[int, ...]: Processed text
+            tuple[int, ...] | None: Processed text
 
         In case of corrupt input arguments, None is returned.
         In case any of methods used return None, None is returned.
@@ -105,7 +107,7 @@ class TextProcessor:
         an element is not added to storage
         """
 
-    def decode(self, encoded_corpus: tuple[int, ...]) -> Optional[str]:
+    def decode(self, encoded_corpus: tuple[int, ...]) -> str | None:
         """
         Decode and postprocess encoded corpus by converting integer identifiers to string.
 
@@ -116,7 +118,7 @@ class TextProcessor:
             encoded_corpus (tuple[int, ...]): A tuple of encoded tokens
 
         Returns:
-            str: Resulting text
+            str | None: Resulting text
 
         In case of corrupt input arguments, None is returned.
         In case any of methods used return None, None is returned.
@@ -130,7 +132,7 @@ class TextProcessor:
             content (dict): ngrams from external JSON
         """
 
-    def _decode(self, corpus: tuple[int, ...]) -> Optional[tuple[str, ...]]:
+    def _decode(self, corpus: tuple[int, ...]) -> tuple[str, ...] | None:
         """
         Decode sentence by replacing ids with corresponding letters.
 
@@ -138,15 +140,13 @@ class TextProcessor:
             corpus (tuple[int, ...]): A tuple of encoded tokens
 
         Returns:
-            tuple[str, ...]: Sequence with decoded tokens
+            tuple[str, ...] | None: Sequence with decoded tokens
 
         In case of corrupt input arguments, None is returned.
         In case any of methods used return None, None is returned.
         """
 
-    def _postprocess_decoded_text(
-        self, decoded_corpus: tuple[str, ...]
-    ) -> Optional[str]:
+    def _postprocess_decoded_text(self, decoded_corpus: tuple[str, ...]) -> str | None:
         """
         Convert decoded sentence into the string sequence.
 
@@ -157,7 +157,7 @@ class TextProcessor:
             decoded_corpus (tuple[str, ...]): A tuple of decoded tokens
 
         Returns:
-            str: Resulting text
+            str | None: Resulting text
 
         In case of corrupt input arguments, None is returned
         """
@@ -178,11 +178,11 @@ class NGramLanguageModel:
         Initialize an instance of NGramLanguageModel.
 
         Args:
-            encoded_corpus (tuple): Encoded text
+            encoded_corpus (tuple | None): Encoded text
             n_gram_size (int): A size of n-grams to use for language modelling
         """
 
-    def get_n_gram_size(self) -> int:
+    def get_n_gram_size(self) -> int:  # type: ignore[empty-body]
         """
         Retrieve value stored in self._n_gram_size attribute.
 
@@ -198,7 +198,7 @@ class NGramLanguageModel:
             frequencies (dict): Computed in advance frequencies for n-grams
         """
 
-    def build(self) -> int:
+    def build(self) -> int:  # type: ignore[empty-body]
         """
         Fill attribute `_n_gram_frequencies` from encoded corpus.
 
@@ -211,7 +211,7 @@ class NGramLanguageModel:
         1 is returned
         """
 
-    def generate_next_token(self, sequence: tuple[int, ...]) -> Optional[dict]:
+    def generate_next_token(self, sequence: tuple[int, ...]) -> dict | None:
         """
         Retrieve tokens that can continue the given sequence along with their probabilities.
 
@@ -219,14 +219,14 @@ class NGramLanguageModel:
             sequence (tuple[int, ...]): A sequence to match beginning of NGrams for continuation
 
         Returns:
-            Optional[dict]: Possible next tokens with their probabilities
+            dict | None: Possible next tokens with their probabilities
 
         In case of corrupt input arguments, None is returned
         """
 
     def _extract_n_grams(
         self, encoded_corpus: tuple[int, ...]
-    ) -> Optional[tuple[tuple[int, ...], ...]]:
+    ) -> tuple[tuple[int, ...], ...] | None:
         """
         Split encoded sequence into n-grams.
 
@@ -234,7 +234,7 @@ class NGramLanguageModel:
             encoded_corpus (tuple[int, ...]): A tuple of encoded tokens
 
         Returns:
-            tuple[tuple[int, ...], ...]: A tuple of extracted n-grams
+            tuple[tuple[int, ...], ...] | None: A tuple of extracted n-grams
 
         In case of corrupt input arguments, None is returned
         """
@@ -249,9 +249,7 @@ class GreedyTextGenerator:
         _text_processor (TextProcessor): A TextProcessor instance to handle text processing
     """
 
-    def __init__(
-        self, language_model: NGramLanguageModel, text_processor: TextProcessor
-    ) -> None:
+    def __init__(self, language_model: NGramLanguageModel, text_processor: TextProcessor) -> None:
         """
         Initialize an instance of GreedyTextGenerator.
 
@@ -260,7 +258,7 @@ class GreedyTextGenerator:
             text_processor (TextProcessor): A TextProcessor instance to handle text processing
         """
 
-    def run(self, seq_len: int, prompt: str) -> Optional[str]:
+    def run(self, seq_len: int, prompt: str) -> str | None:
         """
         Generate sequence based on NGram language model and prompt provided.
 
@@ -269,7 +267,7 @@ class GreedyTextGenerator:
             prompt (str): Beginning of sequence
 
         Returns:
-            str: Generated sequence
+            str | None: Generated sequence
 
         In case of corrupt input arguments or methods used return None,
         None is returned
@@ -285,9 +283,7 @@ class BeamSearcher:
         _model (NGramLanguageModel): A language model to use for next token prediction
     """
 
-    def __init__(
-        self, beam_width: int, language_model: NGramLanguageModel
-    ) -> None:
+    def __init__(self, beam_width: int, language_model: NGramLanguageModel) -> None:
         """
         Initialize an instance of BeamSearchAlgorithm.
 
@@ -296,23 +292,21 @@ class BeamSearcher:
             language_model (NGramLanguageModel): A language model to use for next token prediction
         """
 
-    def get_next_token(
-        self, sequence: tuple[int, ...]
-    ) -> Optional[list[tuple[int, float]]]:
+    def get_next_token(self, sequence: tuple[int, ...]) -> list[tuple[int, float]] | None:
         """
-        Retrieves candidate tokens for sequence continuation.
+        Retrieve candidate tokens for sequence continuation.
 
         The valid candidate tokens are those that are included in the N-gram with.
         Number of tokens retrieved must not be bigger that beam width parameter.
+
+        The return value has the following format: [(token, probability), ...].
+        The return value length matches the Beam Size parameter.
 
         Args:
             sequence (tuple[int, ...]): Base sequence to continue
 
         Returns:
-            list[tuple[int, float]]: Tokens to use for base sequence continuation.
-                The return value has the following format:
-                [(token, probability), ...].
-                The return value length matches the Beam Size parameter.
+            list[tuple[int, float]] | None: Tokens to use for base sequence continuation
 
         In case of corrupt input arguments or methods used return None.
         """
@@ -322,7 +316,7 @@ class BeamSearcher:
         sequence: tuple[int, ...],
         next_tokens: list[tuple[int, float]],
         sequence_candidates: dict[tuple[int, ...], float],
-    ) -> Optional[dict[tuple[int, ...], float]]:
+    ) -> dict[tuple[int, ...], float] | None:
         """
         Generate new sequences from the base sequence with next tokens provided.
 
@@ -331,17 +325,18 @@ class BeamSearcher:
         Args:
             sequence (tuple[int, ...]): Base sequence to continue
             next_tokens (list[tuple[int, float]]): Token for sequence continuation
-            sequence_candidates (dict[tuple[int, ...], float]): Storage with all sequences generated
+            sequence_candidates (dict[tuple[int, ...], float]):
+                Storage with all sequences generated
 
         Returns:
-            dict[tuple[int, ...], float]: Updated sequence candidates
+            dict[tuple[int, ...], float] | None: Updated sequence candidates
 
         In case of corrupt input arguments or unexpected behaviour of methods used return None.
         """
 
     def prune_sequence_candidates(
         self, sequence_candidates: dict[tuple[int, ...], float]
-    ) -> Optional[dict[tuple[int, ...], float]]:
+    ) -> dict[tuple[int, ...], float] | None:
         """
         Remove those sequence candidates that do not make top-N most probable sequences.
 
@@ -349,7 +344,7 @@ class BeamSearcher:
             sequence_candidates (dict[tuple[int, ...], float]): Current candidate sequences
 
         Returns:
-            dict[tuple[int, ...], float]: Pruned sequences
+            dict[tuple[int, ...], float] | None: Pruned sequences
 
         In case of corrupt input arguments return None.
         """
@@ -361,15 +356,14 @@ class BeamSearchTextGenerator:
 
     Attributes:
         _language_model (tuple[NGramLanguageModel]): Language models for next token prediction
-        _text_processor (TextProcessor): A TextProcessor instance to handle text processing
-        _beam_width (int): Beam width parameter for generation
-        beam_searcher (BeamSearcher): Searcher instances for each language model
+        _text_processor (NGramLanguageModel): A TextProcessor instance to handle text processing
+        _beam_width (NGramLanguageModel): Beam width parameter for generation
+        beam_searcher (NGramLanguageModel): Searcher instances for each language model
     """
 
-    def __init__(self,
-                 language_model: NGramLanguageModel,
-                 text_processor: TextProcessor,
-                 beam_width: int):
+    def __init__(
+        self, language_model: NGramLanguageModel, text_processor: TextProcessor, beam_width: int
+    ) -> None:
         """
         Initializes an instance of BeamSearchTextGenerator.
 
@@ -379,25 +373,24 @@ class BeamSearchTextGenerator:
             beam_width (int): Beam width parameter for generation
         """
 
-    def run(self, prompt: str, seq_len: int) -> Optional[str]:
+    def run(self, prompt: str, seq_len: int) -> str | None:
         """
         Generate sequence based on NGram language model and prompt provided.
 
         Args:
-            seq_len (int): Number of tokens to generate
             prompt (str): Beginning of sequence
+            seq_len (int): Number of tokens to generate
 
         Returns:
-            str: Generated sequence
+            str | None: Generated sequence
 
         In case of corrupt input arguments or methods used return None,
         None is returned
         """
 
     def _get_next_token(
-        self,
-        sequence_to_continue: tuple[int, ...]
-    ) -> Optional[list[tuple[int, float]]]:
+        self, sequence_to_continue: tuple[int, ...]
+    ) -> list[tuple[int, float]] | None:
         """
         Retrieve next tokens for sequence continuation.
 
@@ -405,7 +398,8 @@ class BeamSearchTextGenerator:
             sequence_to_continue (tuple[int, ...]): Sequence to continue
 
         Returns:
-            list[tuple[int, float]]: Next tokens for sequence continuation
+            list[tuple[int, float]] | None: Next tokens for sequence
+            continuation
 
         In case of corrupt input arguments return None.
         """
@@ -419,7 +413,6 @@ class NGramLanguageModelReader:
         _json_path (str): Local path to assets file
         _eow_token (str): Special token for text processor
         _text_processor (TextProcessor): A TextProcessor instance to handle text processing
-        _content (dict): N-grams from external JSON
     """
 
     def __init__(self, json_path: str, eow_token: str) -> None:
@@ -431,7 +424,7 @@ class NGramLanguageModelReader:
             eow_token (str): Special token for text processor
         """
 
-    def load(self, n_gram_size: int) -> Optional[NGramLanguageModel]:
+    def load(self, n_gram_size: int) -> NGramLanguageModel | None:
         """
         Fill attribute `_n_gram_frequencies` from dictionary with N-grams.
 
@@ -442,7 +435,7 @@ class NGramLanguageModelReader:
             n_gram_size (int): Size of ngram
 
         Returns:
-            NGramLanguageModel: Built language model.
+            NGramLanguageModel | None: Built language model.
 
         In case of corrupt input arguments or unexpected behaviour of methods used, return 1.
         """
@@ -461,22 +454,23 @@ class BackOffGenerator:
     Language model for back-off based text generation.
 
     Attributes:
-        _language_models (tuple[NGramLanguageModel, ...]): Language models for next token prediction
-        _text_processor (TextProcessor): A TextProcessor instance to handle text processing
+        _language_models (dict[int, NGramLanguageModel]): Language models for next token prediction
+        _text_processor (NGramLanguageModel): A TextProcessor instance to handle text processing
     """
 
-    def __init__(self,
-                 language_models: tuple[NGramLanguageModel, ...],
-                 text_processor: TextProcessor):
+    def __init__(
+        self, language_models: tuple[NGramLanguageModel, ...], text_processor: TextProcessor
+    ) -> None:
         """
         Initializes an instance of BackOffGenerator.
 
         Args:
-            language_models (tuple[NGramLanguageModel, ...]): Language models to use for text generation
+            language_models (tuple[NGramLanguageModel, ...]):
+                Language models to use for text generation
             text_processor (TextProcessor): A TextProcessor instance to handle text processing
         """
 
-    def run(self, seq_len: int, prompt: str) -> Optional[str]:
+    def run(self, seq_len: int, prompt: str) -> str | None:
         """
         Generate sequence based on NGram language model and prompt provided.
 
@@ -485,16 +479,13 @@ class BackOffGenerator:
             prompt (str): Beginning of sequence
 
         Returns:
-            str: Generated sequence
+            str | None: Generated sequence
 
         In case of corrupt input arguments or methods used return None,
         None is returned
         """
 
-    def _get_next_token(
-        self,
-        sequence_to_continue: tuple[int, ...]
-    ) -> Optional[dict[int, float]]:
+    def _get_next_token(self, sequence_to_continue: tuple[int, ...]) -> dict[int, float] | None:
         """
         Retrieve next tokens for sequence continuation.
 
@@ -502,7 +493,7 @@ class BackOffGenerator:
             sequence_to_continue (tuple[int, ...]): Sequence to continue
 
         Returns:
-            dict[int, float]: Next tokens for sequence continuation
+            dict[int, float] | None: Next tokens for sequence continuation
 
         In case of corrupt input arguments return None.
         """
