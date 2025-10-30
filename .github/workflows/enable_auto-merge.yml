@@ -9,6 +9,9 @@ on:
 jobs:
   automerge:
     runs-on: ubuntu-latest
+    if: |
+      contains(github.event.pull_request.labels.*.name, 'automated pr')
+
     steps:
       - name: Find pr_number if needed
         id: pr-info
