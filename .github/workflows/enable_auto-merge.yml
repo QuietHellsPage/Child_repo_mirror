@@ -9,9 +9,6 @@ on:
 jobs:
   automerge:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
     steps:
       - name: Find pr_number if needed
         id: pr-info
@@ -19,13 +16,7 @@ jobs:
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
             echo "sha=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
-          else
-            PR_INFO=$(gh api "/repos/${{ github.repository }}/commits/${{ github.sha }}/pulls" --jq '.[0] | {number: .number, sha: .head.sha}')
-            echo "pr_number=$(echo $PR_INFO | jq -r '.number')" >> $GITHUB_OUTPUT
-            echo "sha=$(echo $PR_INFO | jq -r '.sha')" >> $GITHUB_OUTPUT
           fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Checkout and setup
         uses: actions/checkout@v4
@@ -42,6 +33,13 @@ jobs:
           checkName: Build Documentation
           ref: ${{ steps.pr-info.outputs.sha || github.sha }}
       
+      - name: Get GitHub App Installation Access Token
+        uses: qoomon/actions--access-token@v2.1.1
+        id: access-token
+        with:
+          github-app-id: ${{ secrets.GH_APP_ID }}
+          github-app-private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+      
       - name: Automerge
         if: steps.wait-for-checks.outputs.conclusion == 'success'
         run: |
@@ -49,9 +47,6 @@ jobs:
             --merge \
             --auto \
             --delete-branch
-          
-          sleep 10
-          gh workflow run "Documentation Check" --ref main
-          gh workflow run "Github Pages Deployment" --ref main
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.access-token.outputs.token }}
+
