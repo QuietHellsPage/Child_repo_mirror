@@ -48,7 +48,7 @@ def calculate_jaccard_distance(token: str, candidate: str) -> float | None:
         float | None: Jaccard distance score in range [0, 1].
 
     In case of corrupt input arguments, None is returned.
-    In case of both strings being empty, 1.0 is returned.
+    In case of both strings being empty, 0.0 is returned.
     """
 
 
@@ -109,8 +109,6 @@ def initialize_levenshtein_matrix(
 
     Returns:
         list[list[int]] | None: Initialized matrix with base cases filled.
-
-    In case of corrupt input arguments, None is returned.
     """
 
 
@@ -124,8 +122,6 @@ def fill_levenshtein_matrix(token: str, candidate: str) -> list[list[int]] | Non
 
     Returns:
         list[list[int]] | None: Completed Levenshtein distance matrix.
-
-    In case of corrupt input arguments, None is returned.
     """
 
 
@@ -140,10 +136,8 @@ def calculate_levenshtein_distance(token: str, candidate: str) -> int | None:
     Returns:
         int | None: Minimum number of single-character edits (insertions, deletions,
              substitutions) required to transform token into candidate.
-
-    In case of corrupt input arguments, None is returned.
     """
-
+    return isinstance(token, str)
 
 def delete_letter(word: str) -> list[str]:
     """
