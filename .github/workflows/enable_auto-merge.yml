@@ -9,6 +9,9 @@ on:
 jobs:
   automerge:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Find pr_number if needed
         id: pr-info
@@ -16,7 +19,13 @@ jobs:
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
             echo "sha=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          else
+            PR_INFO=$(gh api "/repos/${{ github.repository }}/commits/${{ github.sha }}/pulls" --jq '.[0] | {number: .number, sha: .head.sha}')
+            echo "pr_number=$(echo $PR_INFO | jq -r '.number')" >> $GITHUB_OUTPUT
+            echo "sha=$(echo $PR_INFO | jq -r '.sha')" >> $GITHUB_OUTPUT
           fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Checkout and setup
         uses: actions/checkout@v4
@@ -41,4 +50,4 @@ jobs:
             --auto \
             --delete-branch
         env:
-          GH_TOKEN: ${{ secrets.SOURCE_REPO_PAT }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
