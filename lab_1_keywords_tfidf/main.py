@@ -115,7 +115,7 @@ def remove_stop_words(tokens: list[str], stop_words: list[str]) -> list[str] | N
     if not all([check_list(tokens, str, True),
         check_list(stop_words, str, True)]):
         return None
-    return [toke for toke in tokens if toke not in set(stop_words)]
+    return [token for token in tokens if token not in set(stop_words)]
 
 
 def calculate_frequencies(tokens: list[str]) -> dict[str, int] | None:
@@ -131,10 +131,10 @@ def calculate_frequencies(tokens: list[str]) -> dict[str, int] | None:
     """
     if not check_list(tokens, str, True):
         return None
-    frequencies = {}
+    freqs = {}
     for token in tokens:
-        frequencies[token] = frequencies.get(token, 0) + 1
-    return frequencies
+        freqs[token] = freqs.get(token, 0) + 1
+    return freqs
 
 
 def get_top_n(frequencies: dict[str, int | float], top: int) -> list[str] | None:
