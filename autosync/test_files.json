@@ -56,7 +56,7 @@
     "target": "s.py"
   },
   {
-    "source": "bff.txt",
-    "target": "bfff.txt"
+    "source": "123.txt",
+    "target": "123.txt"
   }
 ]
